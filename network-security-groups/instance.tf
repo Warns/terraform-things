@@ -48,7 +48,7 @@ resource "azurerm_network_interface" "wagtail-instance-1" {
   subnet_id = "azurerm_subnet_wagtail-internal-1.id
   private_ip_address_allocation = "Dynamic"
   public_ip_address_id = azurerm_public_ip.wagtail-instance-1.id
-  }
+}
 
 resource "azurerm_public_ip "wagtail-instance-1" {
   name = "instance1-public-ip"
@@ -88,4 +88,56 @@ storage_image_reference {
   version = "latest"
 }
 
+storage_os_disk {
+  name = "wagtailosdisk2"
+  caching = "ReadWrite"
+  create_option = "FromImage"
+  managed_disk_type = "Standard_LRS" # Should be SSD on prod.
+}
+
+os_profile {
+  computer_name = "wagtail-instance"
+  admin_username = "wagtail"
+}
+
+os_profile_linux_config {
+  disable_password_authentication = true
+  ssh_keys {
+    key_data = file("terraform.pub")
+    path = ""
+    }
+  }
+}
+
+resource "azurerm_network_interface" "wagtail-instance-2" {
+  name = "${var.prefix}-instance2"
+  location = var.location
+  resource_group_name = azurerm_resource_group.wagtail.name
+  network_security_group_id = azurerm_network_security_group.internal-facing.id # This will have an internal facing security group in network.tf
+  
+  ip_configuration {
+  name = "instance2"
+  subnet_id = "azurerm_subnet_wagtail-internal-1.id
+  private_ip_address_allocation = "Dynamic"
+  public_ip_address_id = azurerm_public_ip.wagtail-instance-1.id
+  }
+
+resource "azurerm_public_ip "wagtail-instance-2" {
+  name = "instance2-public-ip"
+  location = var.location
+  resource_group_name = azurerm_resource_group.wagtail.name
+  allocation_method = "Dynamic"
+}
+
+resource "azurerm_application_security_group" "wagtail-instance-group" {
+  name = "internet-facing"
+  location = var.location
+  resource_group_name = azurerm_resource_group.wagtail.name
+}
+
+resource "azurerm_network_interface_application_security_group_association" "demo-instance-group" {
+  network_interface_id = azurerm_network_interface.wagtail-instance-2.id
+  ip_configuration_name = "instance2"
+  application_security_group_id = azurerm_application_security_group.wagtail-instance-group.id
+}
 
