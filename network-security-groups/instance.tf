@@ -29,8 +29,8 @@ resource "azurerm_virtual_machine" "wagtail-instance-1" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = file("terraform.pub")
-      path     = "../../../ssh"
+      key_data = file("~/.ssh/wagtail.pub")
+      path     = "/home/wagtail/.ssh/authorized_keys"
     }
   }
 }
@@ -106,7 +106,7 @@ resource "azurerm_virtual_machine" "wagtail-instance-2" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = file("terraform.pub")
+      key_data = file("~/.ssh/wagtail.pub")
       path     = "/home/wagtail/.ssh/authorized_keys"
     }
   }
