@@ -1,4 +1,4 @@
-resource "azurerm_resource_group" "demo" {
-  name     = "autoscaling-demo"
+resource "azurerm_resource_group" "wagtail" {
+  name     = "autoscaling-wagtail"
   location = var.location
 }

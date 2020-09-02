@@ -1,7 +1,7 @@
-resource "azurerm_virtual_machine_scale_set" "demo" {
+resource "azurerm_linux_virtual_machine_scale_set" "wagtail" {
   name                = "mytestscaleset-1"
   location            = var.location
-  resource_group_name = azurerm_resource_group.demo.name
+  resource_group_name = azurerm_resource_group.wagtail.name
 
   # automatic rolling upgrade
   automatic_os_upgrade = true
@@ -15,9 +15,9 @@ resource "azurerm_virtual_machine_scale_set" "demo" {
   }
 
   # required when using rolling upgrade policy
-  health_probe_id = azurerm_lb_probe.demo.id
+  health_probe_id = azurerm_lb_probe.wagtail.id
 
-  zones           = var.zones
+  zones = var.zones
 
   sku {
     name     = "Standard_A1_v2"
@@ -47,8 +47,8 @@ resource "azurerm_virtual_machine_scale_set" "demo" {
   }
 
   os_profile {
-    computer_name_prefix = "demo"
-    admin_username       = "demo"
+    computer_name_prefix = "wagtail"
+    admin_username       = "wagtail"
     custom_data          = "#!/bin/bash\n\napt-get update && apt-get install -y nginx && systemctl enable nginx && systemctl start nginx"
   }
 
@@ -57,19 +57,19 @@ resource "azurerm_virtual_machine_scale_set" "demo" {
 
     ssh_keys {
       key_data = file("mykey.pub")
-      path     = "/home/demo/.ssh/authorized_keys"
+      path     = "/home/wagtail/.ssh/authorized_keys"
     }
   }
 
   network_profile {
-    name                                     = "networkprofile"
-    primary                                  = true
-    network_security_group_id                = azurerm_network_security_group.demo-instance.id
+    name                      = "networkprofile"
+    primary                   = true
+    network_security_group_id = azurerm_network_security_group.wagtail-instance.id
 
     ip_configuration {
       name                                   = "IPConfiguration"
       primary                                = true
-      subnet_id                              = azurerm_subnet.demo-subnet-1.id
+      subnet_id                              = azurerm_subnet.wagtail-subnet-1.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
       load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.lbnatpool.id]
     }
