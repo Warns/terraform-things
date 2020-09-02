@@ -48,7 +48,7 @@ resource "azurerm_monitor_autoscale_setting" "example" {
       scale_action {
         direction = "Decrease"
         type      = "ChangeCount"
-        value     = "2"
+        value     = "1"
         cooldown  = "PT1M"
       }
     }
