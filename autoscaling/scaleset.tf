@@ -1,5 +1,5 @@
-resource "azurerm_linux_virtual_machine_scale_set" "wagtail" {
-  name                = "wagtailtestscaleset-1"
+resource "azurerm_virtual_machine_scale_set" "wagtail" {
+  name                = "mytestscaleset-1"
   location            = var.location
   resource_group_name = azurerm_resource_group.wagtail.name
 
@@ -56,7 +56,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "wagtail" {
     disable_password_authentication = true
 
     ssh_keys {
-      key_data = file("mykey.pub")
+      key_data = file("~/.ssh/wagtail.pub")
       path     = "/home/wagtail/.ssh/authorized_keys"
     }
   }
