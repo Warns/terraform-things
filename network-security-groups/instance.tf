@@ -129,5 +129,5 @@ resource "azurerm_network_interface" "wagtail-instance-2" {
 
 resource "azurerm_network_interface_security_group_association" "wagtail-instance-2" {
   network_interface_id      = azurerm_network_interface.wagtail-instance-2.id
-  network_security_group_id = azurerm_network_security_group.internal-facing.id
+  network_security_group_id = azurerm_network_security_group.internal-facing.id # This will have the internal facing network security group in network.tf
 }
